@@ -1,0 +1,27 @@
+# ── Docker build context exclusions ──────────────────────────────────────────
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.db
+*.sqlite
+*.sqlite3
+.env
+.git/
+.gitignore
+.idea/
+.vscode/
+storage/images/*
+storage/videos/*
+!storage/images/.gitkeep
+!storage/videos/.gitkeep
+*.md
+*.log
+debug_output.txt
+test_output.txt
+inspect_output.txt
+server_pid.txt
+Dockerfile
+docker-compose*.yml
+.dockerignore
+.uv/

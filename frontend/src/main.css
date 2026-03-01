@@ -1,0 +1,172 @@
+@import "tailwindcss";
+
+/* ── Custom Theme ─────────────────────────────────────── */
+@theme {
+  --color-bg: #0F0E17;
+  --color-surface: #16151F;
+  --color-surface-2: #1F1D2E;
+  --color-border: #2E2B45;
+  --color-border-2: #3D3A5C;
+  --color-accent: #FF7A45;
+  --color-accent-soft: #FF7A4520;
+  --color-accent-2: #FFB347;
+  --color-text: #F5F3FF;
+  --color-muted: #8985A6;
+  --color-success: #4ADE80;
+  --color-danger: #F87171;
+
+  --font-display: 'Cabinet Grotesk', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+/* ── CSS Custom Properties ────────────────────────────── */
+:root {
+  --bg:         #0F0E17;
+  --surface:    #16151F;
+  --surface-2:  #1F1D2E;
+  --border:     #2E2B45;
+  --border-2:   #3D3A5C;
+  --accent:     #FF7A45;
+  --accent-soft:#FF7A4520;
+  --accent-2:   #FFB347;
+  --text:       #F5F3FF;
+  --text-muted: #8985A6;
+  --success:    #4ADE80;
+  --danger:     #F87171;
+  --aurora-1:   #FF7A4530;
+  --aurora-2:   #7C3AED25;
+  --aurora-3:   #06B6D430;
+}
+
+/* ── Base Reset & Aurora Background ───────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Cabinet Grotesk', sans-serif;
+  color: var(--text);
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 20% 10%, var(--aurora-1), transparent),
+    radial-gradient(ellipse 60% 40% at 80% 20%, var(--aurora-2), transparent),
+    radial-gradient(ellipse 70% 50% at 50% 80%, var(--aurora-3), transparent);
+  background-attachment: fixed;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Glassmorphism Card ───────────────────────────────── */
+.glass-card {
+  background: rgba(22, 21, 31, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+/* ── Glow on Accent Elements ──────────────────────────── */
+.glow-accent {
+  box-shadow: 0 0 24px var(--accent-soft), 0 0 48px var(--aurora-1);
+}
+
+/* ── Scrollbar ────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-2);
+}
+
+/* ── CodeMirror overrides ─────────────────────────────── */
+.cm-editor {
+  background: var(--surface-2) !important;
+  border-radius: 12px;
+  min-height: 200px;
+}
+.cm-editor.cm-focused {
+  outline: none;
+}
+.cm-gutters {
+  background: var(--surface) !important;
+  border-right: 1px solid var(--border) !important;
+  border-radius: 12px 0 0 12px;
+}
+.cm-content {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 13px !important;
+}
+.cm-scroller {
+  border-radius: 12px;
+}
+
+/* ── Waveform Loader ──────────────────────────────────── */
+.waveform-loader {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+}
+.waveform-loader span {
+  display: block;
+  width: 4px;
+  height: 24px;
+  background: var(--accent);
+  border-radius: 2px;
+  animation: wave 1.2s ease-in-out infinite;
+}
+.waveform-loader span:nth-child(1) { animation-delay: 0s; }
+.waveform-loader span:nth-child(2) { animation-delay: 0.1s; }
+.waveform-loader span:nth-child(3) { animation-delay: 0.2s; }
+.waveform-loader span:nth-child(4) { animation-delay: 0.3s; }
+.waveform-loader span:nth-child(5) { animation-delay: 0.4s; }
+
+@keyframes wave {
+  0%, 100% { transform: scaleY(0.4); }
+  50% { transform: scaleY(1); }
+}
+
+/* ── Stagger Fade-Up Animation ────────────────────────── */
+.fade-up {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 0.6s ease forwards;
+}
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Pulse animation for processing badge ─────────────── */
+.pulse-amber {
+  animation: pulseAmber 2s ease-in-out infinite;
+}
+@keyframes pulseAmber {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ── Animated dots ────────────────────────────────────── */
+.animated-dots::after {
+  content: '';
+  animation: dots 1.5s steps(4, end) infinite;
+}
+@keyframes dots {
+  0%   { content: ''; }
+  25%  { content: '.'; }
+  50%  { content: '..'; }
+  75%  { content: '...'; }
+  100% { content: ''; }
+}
+

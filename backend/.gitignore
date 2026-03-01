@@ -1,0 +1,58 @@
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+
+# ── Virtual environment ──────────────────────────────────────────────────────
+.venv/
+venv/
+env/
+
+# ── Environment variables ────────────────────────────────────────────────────
+.env
+
+# ── SQLite database ──────────────────────────────────────────────────────────
+*.db
+*.sqlite
+*.sqlite3
+
+# ── Generated storage (images/videos are runtime artifacts) ──────────────────
+storage/images/*
+storage/videos/*
+!storage/images/.gitkeep
+!storage/videos/.gitkeep
+
+# ── IDE / Editor ─────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ── OS ───────────────────────────────────────────────────────────────────────
+desktop.ini
+ehthumbs.db
+
+# ── Testing / Debug artifacts ────────────────────────────────────────────────
+test_output.txt
+debug_output.txt
+inspect_output.txt
+server_*.log
+server_pid.txt
+htmlcov/
+.coverage
+.pytest_cache/
+
+# ── Docker ───────────────────────────────────────────────────────────────────
+docker-compose.override.yml
+
+# ── uv ───────────────────────────────────────────────────────────────────────
+# uv.lock is committed (reproducible builds), but cache is not
+.uv/

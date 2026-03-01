@@ -1,0 +1,17 @@
+[project]
+name = "cosual-backend"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "dashscope",
+    "langgraph",
+    "langchain-core",
+    "sqlalchemy[asyncio]",
+    "aiosqlite",
+    "httpx",
+    "python-dotenv",
+    "pydantic",
+    "pydantic-settings",
+]

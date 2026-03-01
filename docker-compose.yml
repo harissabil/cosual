@@ -1,0 +1,46 @@
+# ── Cosual — Docker Compose ───────────────────────────────────────────────────
+# Usage:
+#   cp .env.example .env   # then fill in your values
+#   docker compose up -d --build
+
+services:
+  # ── Backend (FastAPI + LangGraph) ──────────────────────────────────────────
+  backend:
+    build: ./backend
+    container_name: cosual-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - cosual-storage:/app/storage
+      - cosual-db:/app/data
+    environment:
+      - DATABASE_URL=sqlite+aiosqlite:///./data/cosual.db
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/docs')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  # ── Frontend (Vue 3 + Nginx) ───────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_BASE_URL: http://${DOMAIN:-localhost}:8000
+    container_name: cosual-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  cosual-storage:
+    driver: local
+  cosual-db:
+    driver: local

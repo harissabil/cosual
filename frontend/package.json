@@ -1,0 +1,30 @@
+{
+  "name": "cosual-frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@codemirror/lang-javascript": "^6.2.4",
+    "@codemirror/lang-python": "^6.2.1",
+    "@codemirror/language": "^6.12.2",
+    "@codemirror/state": "^6.5.4",
+    "@codemirror/theme-one-dark": "^6.1.3",
+    "@codemirror/view": "^6.39.15",
+    "axios": "^1.13.6",
+    "codemirror": "^6.0.2",
+    "pinia": "^3.0.4",
+    "vue": "^3.5.29",
+    "vue-router": "^4.6.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.2.1",
+    "@vitejs/plugin-vue": "^5.2.4",
+    "tailwindcss": "^4.2.1",
+    "vite": "^6.4.1"
+  }
+}
