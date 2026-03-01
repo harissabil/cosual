@@ -10,7 +10,15 @@ Built with **Vue 3** + **FastAPI** + **LangGraph** + **Alibaba Cloud Model Studi
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white)
 ![Alibaba Cloud](https://img.shields.io/badge/Alibaba_Cloud-FF6A00?style=flat&logo=alibaba-cloud&logoColor=white)
 
----
+## Table of Contents
+- [Features](#features)
+- [AI Workflow](#ai-workflow)
+- [Quick Start — Deploy to Alibaba Simple Application Server](#quick-start--deploy-to-alibaba-simple-application-server)
+- [Set Up a Domain with SSL (Optional)](#set-up-a-domain-with-ssl-optional)
+- [Environment Variables](#environment-variables)
+- [Tech Stack](#tech-stack)
+- [Local Development](#local-development)
+- [License](#license)
 
 ## Features
 
@@ -22,79 +30,16 @@ Built with **Vue 3** + **FastAPI** + **LangGraph** + **Alibaba Cloud Model Studi
 - **Revision System**: Iteratively refine generated images via natural language instructions
 - **Job History**: Browse and revisit all past generations
 
-## Architecture
+## AI Workflow
 
-```
-┌───────────────────────┐       ┌────────────────────────────────────┐
-│   Frontend (Vue 3)    │       │        Backend (FastAPI)            │
-│   Nginx · Port 80     │──────▶│        Uvicorn · Port 8000         │
-│                       │       │                                    │
-│  • Vue Router (SPA)   │       │  ┌──────────────────────────────┐  │
-│  • Pinia stores       │       │  │   LangGraph Agent Pipeline   │  │
-│  • CodeMirror 6       │       │  │                              │  │
-│  • Tailwind CSS       │       │  │  Router → Prompt → Image/    │  │
-│                       │       │  │           Video → Caption     │  │
-└───────────────────────┘       │  └──────────┬───────────────────┘  │
-                                │             │                      │
-                                │  ┌──────────▼───────────────────┐  │
-                                │  │  DashScope (Alibaba Cloud)   │  │
-                                │  │  • Qwen (LLM)               │  │
-                                │  │  • Wanx (Image)             │  │
-                                │  │  • Wanx (Video)             │  │
-                                │  └──────────────────────────────┘  │
-                                │                                    │
-                                │  SQLite DB    Storage (images/vids)│
-                                └────────────────────────────────────┘
-```
+<img width="852" height="721" alt="cosual-ai-diagram drawio(5)" src="https://github.com/user-attachments/assets/5232645a-4663-4d72-808d-6accf6d6f10f" />
 
-## Project Structure
+## Quick Start — Deploy to Alibaba Simple Application Server
 
-```
-cosual/
-├── docker-compose.yml          # One-command deployment
-├── .env.example                # Environment variable template
-├── backend/
-│   ├── Dockerfile
-│   ├── main.py                 # FastAPI entrypoint
-│   ├── pyproject.toml          # Python dependencies (uv)
-│   ├── agents/                 # LangGraph agent pipeline
-│   │   ├── graph.py            # Agent graph definition
-│   │   ├── router.py           # Input router agent
-│   │   ├── prompt_agent.py     # Prompt generation agent
-│   │   ├── image_agent.py      # Image generation (Wanx)
-│   │   ├── video_agent.py      # Video generation (Wanx)
-│   │   ├── caption_agent.py    # Caption generation agent
-│   │   ├── github_agent.py     # GitHub repo analyzer
-│   │   ├── code_analyzer.py    # Code analysis agent
-│   │   └── llm.py              # DashScope LLM configuration
-│   ├── api/                    # API route handlers
-│   │   ├── generate.py         # POST /generate, GET /status/:id
-│   │   ├── history.py          # GET /history, GET /history/:id
-│   │   └── revise.py           # POST /revise/:id
-│   ├── database/               # SQLAlchemy async models
-│   └── utils/                  # File storage, title generation
-├── frontend/
-│   ├── Dockerfile
-│   ├── nginx.conf              # SPA-ready nginx config
-│   ├── package.json            # Node.js dependencies
-│   └── src/
-│       ├── App.vue             # Root component
-│       ├── api/client.js       # Axios API client
-│       ├── views/              # Page components
-│       ├── components/         # Reusable UI components
-│       ├── stores/             # Pinia state management
-│       └── router/             # Vue Router config
-└── README.md                   # ← You are here
-```
-
----
-
-## Prerequisites
+### Prerequisites
 
 - A server running **Ubuntu 20.04+** (e.g. Alibaba Cloud Simple Application Server)
 - **Alibaba Cloud DashScope API key** — get one from [Model Studio](https://dashscope.console.aliyun.com/)
-
-## Quick Start — Deploy to Alibaba Simple Application Server
 
 ### 1. Provision Your Server
 
@@ -182,53 +127,7 @@ Visit your app:
 - **Frontend**: `http://<YOUR_SERVER_IP>`
 - **Backend API docs**: `http://<YOUR_SERVER_IP>:8000/docs`
 
----
-
-## Day-to-Day Operations
-
-### View Logs
-
-```bash
-# All services
-docker compose logs -f
-
-# Backend only
-docker compose logs -f backend
-
-# Frontend only
-docker compose logs -f frontend
-```
-
-### Restart Services
-
-```bash
-docker compose restart
-```
-
-### Update to Latest Version
-
-```bash
-cd /opt/cosual
-git pull origin main
-docker compose up -d --build
-```
-
-### Stop Everything
-
-```bash
-docker compose down
-```
-
-### Reset Data (⚠️ destructive)
-
-```bash
-docker compose down -v    # Removes volumes (database + generated files)
-docker compose up -d --build
-```
-
----
-
-## Optional: Set Up a Domain with SSL
+## Set Up a Domain with SSL (Optional)
 
 If you have a domain name pointing to your server:
 
@@ -325,16 +224,6 @@ docker compose up -d --build
 | `DASHSCOPE_API_KEY` | ✅ | — | Alibaba Cloud Model Studio API key |
 | `DOMAIN` | ✅ | `localhost` | Server public IP or domain (used at frontend build time) |
 | `DATABASE_URL` | ❌ | `sqlite+aiosqlite:///./data/cosual.db` | SQLite connection string |
-
-## API Endpoints
-
-| Method | Path | Description |
-|--------|------|-------------|
-| `POST` | `/generate` | Start a new generation job |
-| `GET` | `/status/{job_id}` | Poll job status |
-| `POST` | `/revise/{job_id}` | Revise an image job |
-| `GET` | `/history` | List all jobs |
-| `GET` | `/history/{job_id}` | Get job details with revision timeline |
 
 ## Tech Stack
 
