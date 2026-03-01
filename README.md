@@ -231,7 +231,7 @@ docker compose up -d --build
 |-------|-----------|
 | Frontend | Vue 3, Tailwind CSS, CodeMirror 6, Pinia, Vue Router |
 | Backend | FastAPI, LangGraph, SQLAlchemy (async), aiosqlite |
-| AI / LLM | DashScope (Qwen for text, Wanx for image/video) |
+| AI / LLM | DashScope (Qwen and Wan) |
 | Infrastructure | Docker, Docker Compose, Nginx |
 | Deployment | Alibaba Cloud Simple Application Server (Ubuntu) |
 
