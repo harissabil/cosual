@@ -5,10 +5,11 @@ from functools import partial
 from typing import Optional
 
 import dashscope
-from dashscope import Generation
+from dashscope import MultiModalConversation
 from dotenv import load_dotenv
 
 from agents.llm import SYSTEM_PROMPTS
+from agents.models import LLM_FLASH_MODEL
 
 load_dotenv()
 
@@ -40,19 +41,26 @@ async def generate_title(
     try:
         response = await asyncio.to_thread(
             partial(
-                Generation.call,
+                MultiModalConversation.call,
                 api_key=API_KEY,
-                model="qwen-plus",
+                model=LLM_FLASH_MODEL,
                 messages=[
                     {"role": "system", "content": SYSTEM_PROMPTS["title_generator"]},
                     {"role": "user", "content": prompt},
                 ],
+                enable_thinking=False,
             )
         )
-        # dashscope may return text in output.text or output.choices
+        # dashscope MultiModalConversation returns content as a list of dicts
+        # e.g. [{"text": "..."}] — extract the plain text string
         text = response.output.text
         if not text and response.output.choices:
-            text = response.output.choices[0].message.content
+            content = response.output.choices[0].message.content
+            if isinstance(content, list):
+                text_parts = [part.get("text", "") for part in content if isinstance(part, dict)]
+                text = "".join(text_parts)
+            elif isinstance(content, str):
+                text = content
         if text:
             title = text.strip().strip('"')
             logger.info("[title_generator] ✅ Title generated: %s", title)

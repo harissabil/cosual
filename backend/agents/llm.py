@@ -6,8 +6,10 @@ import os
 from functools import partial
 
 import dashscope
-from dashscope import Generation
+from dashscope import MultiModalConversation
 from dotenv import load_dotenv
+
+from agents.models import LLM_MODEL
 
 load_dotenv()
 
@@ -68,31 +70,41 @@ SYSTEM_PROMPTS = {
 }
 
 
-async def call_qwen(prompt: str, system: str | None = None, agent_name: str = "unknown") -> str:
-    """Call Qwen-plus and return the text response (non-blocking).
+async def call_qwen(
+    prompt: str,
+    system: str | None = None,
+    agent_name: str = "unknown",
+    enable_thinking: bool = False,
+) -> str:
+    """Call Qwen and return the text response (non-blocking).
 
     Args:
         prompt: The user prompt to send.
         system: Override system prompt. If None, uses the agent-specific Cosual prompt.
         agent_name: Name of the calling agent (for logging and prompt lookup).
+        enable_thinking: Whether to enable Qwen's extended thinking mode.
+            Use True for complex reasoning tasks (architecture analysis, prompt design).
+            Use False for simple/fast tasks (titles, captions).
     """
     if system is None:
         system = SYSTEM_PROMPTS.get(agent_name, COSUAL_SYSTEM_BASE)
 
-    logger.info("[%s] 🧠 Calling Qwen LLM (prompt length: %d chars)", agent_name, len(prompt))
+    logger.info("[%s] 🧠 Calling Qwen LLM (prompt length: %d chars, thinking: %s)", agent_name, len(prompt), enable_thinking)
     logger.debug("[%s] Prompt: %.200s...", agent_name, prompt)
 
     response = await asyncio.to_thread(
         partial(
-            Generation.call,
+            MultiModalConversation.call,
             api_key=API_KEY,
-            model="qwen-plus",
+            model=LLM_MODEL,
             messages=[
                 {"role": "system", "content": system},
                 {"role": "user", "content": prompt},
             ],
+            enable_thinking=enable_thinking,
         )
     )
+    
     if response.status_code != 200:
         logger.error("[%s] ❌ Qwen call failed: status=%s, code=%s, message=%s",
                       agent_name, response.status_code, response.code, response.message)
@@ -100,12 +112,22 @@ async def call_qwen(prompt: str, system: str | None = None, agent_name: str = "u
             f"Qwen call failed: status={response.status_code}, "
             f"code={response.code}, message={response.message}"
         )
-    # dashscope may return text in output.text or output.choices
+        
+    # dashscope MultiModalConversation returns content as a list of dicts
+    # e.g. [{"text": "..."}] — extract the plain text string
+    result = None
     if response.output.text:
         result = response.output.text
     elif response.output.choices:
-        result = response.output.choices[0].message.content
-    else:
+        content = response.output.choices[0].message.content
+        # content may be a list of dicts (multimodal format) or a plain string
+        if isinstance(content, list):
+            text_parts = [part.get("text", "") for part in content if isinstance(part, dict)]
+            result = "".join(text_parts)
+        elif isinstance(content, str):
+            result = content
+
+    if not result:
         logger.error("[%s] ❌ Qwen returned empty output", agent_name)
         raise RuntimeError("Qwen returned empty output")
 
