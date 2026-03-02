@@ -2,7 +2,7 @@
   <nav class="fixed top-0 left-0 right-0 z-50 border-b border-border backdrop-blur-xl bg-bg/70">
     <div class="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
       <router-link to="/generate" class="flex items-center -gap-px font-display font-bold text-xl tracking-tight leading-none text-text hover:text-accent transition-colors">
-        <img src="/cosual.svg" alt="C" class="w-6 h-6 block -mr-1.5" />
+        <img src="/cosual.svg" alt="C" class="w-6 h-6 block -mr-1.5 relative -top-[0.75px]" />
         <span>OSUAL</span>
       </router-link>
       <router-link to="/history" class="flex items-center gap-2 font-mono text-sm text-muted hover:text-text transition-colors">
