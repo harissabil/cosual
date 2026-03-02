@@ -11,6 +11,7 @@ Built with **Vue 3** + **FastAPI** + **LangGraph** + **Alibaba Cloud Model Studi
 ![Alibaba Cloud](https://img.shields.io/badge/Alibaba_Cloud-FF6A00?style=flat&logo=alibaba-cloud&logoColor=white)
 
 ## Table of Contents
+- [Demo Video](#demo-video)
 - [Features](#features)
 - [AI Workflow](#ai-workflow)
 - [Quick Start — Deploy to Alibaba Simple Application Server](#quick-start--deploy-to-alibaba-simple-application-server)
@@ -19,6 +20,10 @@ Built with **Vue 3** + **FastAPI** + **LangGraph** + **Alibaba Cloud Model Studi
 - [Tech Stack](#tech-stack)
 - [Local Development](#local-development)
 - [License](#license)
+
+## Demo Video
+
+https://github.com/user-attachments/assets/7a3677d8-d531-4568-a1fa-ecb2efc4723e
 
 ## Features
 
