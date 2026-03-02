@@ -21,6 +21,18 @@
             :alt="detail.title"
             class="rounded-xl w-full max-h-[60vh] object-contain relative"
           />
+
+          <div class="mt-3 flex items-center gap-3 justify-end">
+            <a
+              v-if="activeOutputUrl"
+              :href="mediaUrl(activeOutputUrl)"
+              :download="detailDownloadName"
+              class="py-2 px-4 rounded-xl font-display font-bold text-sm text-center border border-accent text-accent hover:bg-accent-soft transition-all duration-200"
+            >
+              Download Image
+            </a>
+          </div>
+
           <!-- Revision loading overlay -->
           <div v-if="revising" class="absolute inset-0 rounded-xl bg-bg/60 flex items-center justify-center">
             <div class="waveform-loader">
@@ -39,6 +51,16 @@
             controls
             class="rounded-xl w-full max-h-[60vh]"
           />
+          <div class="mt-3 flex items-center gap-3 justify-end">
+            <a
+              v-if="activeOutputUrl"
+              :href="mediaUrl(activeOutputUrl)"
+              :download="detailDownloadName"
+              class="py-2 px-4 rounded-xl font-display font-bold text-sm text-center border border-accent text-accent hover:bg-accent-soft transition-all duration-200"
+            >
+              Download Video
+            </a>
+          </div>
         </div>
 
         <!-- Caption -->
@@ -229,6 +251,15 @@ function formatDate(dateStr) {
   const d = new Date(dateStr)
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
 }
+
+function safeFilename(title = 'cosual', url = '') {
+  const extMatch = url?.split('?')[0].match(/\.([a-zA-Z0-9]+)$/)
+  const ext = extMatch ? `.${extMatch[1]}` : '.png'
+  const base = (title || 'cosual').toString().replace(/[^a-z0-9\-_ ]+/gi, '').trim().replace(/\s+/g, '_')
+  return `${base}${ext}`
+}
+
+const detailDownloadName = computed(() => safeFilename(detail.value?.title, activeOutputUrl.value))
 
 onMounted(fetchDetail)
 </script>

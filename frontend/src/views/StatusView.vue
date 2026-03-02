@@ -24,17 +24,22 @@
         <img
           :src="mediaUrl(status.output_url)"
           :alt="status.title"
-          class="rounded-xl max-h-[60vh] w-auto mx-auto"
+          class="rounded-xl w-full max-h-[60vh] object-contain relative"
         />
+        <div class="mt-3 flex items-center gap-3 justify-end">
+          <a
+            v-if="status.output_url"
+            :href="mediaUrl(status.output_url)"
+            :download="statusDownloadName"
+            class="py-2 px-4 rounded-xl font-display font-bold text-sm text-center border border-accent text-accent hover:bg-accent-soft transition-all duration-200"
+          >
+            Download Image
+          </a>
+        </div>
       </div>
-      <CaptionBox :caption="status.caption" :platform="platform" />
-      <ShareLinkedIn
-        v-if="platform === 'linkedin'"
-        :url="mediaUrl(status.output_url)"
-        :title="status.title"
-        :summary="status.caption || ''"
-      />
-      <div class="flex gap-3">
+
+      <!-- Download / Actions -->
+      <div class="flex items-center gap-3">
         <router-link
           :to="`/history/${status.job_id}`"
           class="flex-1 py-3 rounded-xl font-display font-bold text-sm text-center border border-accent text-accent hover:bg-accent-soft transition-all duration-200"
@@ -62,6 +67,16 @@
           controls
           class="rounded-xl w-full max-h-[60vh]"
         />
+        <div class="mt-3 flex items-center gap-3 justify-end">
+          <a
+            v-if="status.output_url"
+            :href="mediaUrl(status.output_url)"
+            :download="statusDownloadName"
+            class="py-2 px-4 rounded-xl font-display font-bold text-sm text-center border border-accent text-accent hover:bg-accent-soft transition-all duration-200"
+          >
+            Download Video
+          </a>
+        </div>
       </div>
       <CaptionBox :caption="status.caption" :platform="platform" />
       <ShareLinkedIn
@@ -128,5 +143,14 @@ onMounted(() => {
 onUnmounted(() => {
   generateStore.stopPolling()
 })
+
+function safeFilename(title = 'cosual', url = '') {
+  const extMatch = url?.split('?')[0].match(/\.([a-zA-Z0-9]+)$/)
+  const ext = extMatch ? `.${extMatch[1]}` : '.png'
+  const base = (title || 'cosual').toString().replace(/[^a-z0-9\-_ ]+/gi, '').trim().replace(/\s+/g, '_')
+  return `${base}${ext}`
+}
+
+const statusDownloadName = computed(() => safeFilename(status.value?.title, status.value?.output_url))
 </script>
 
