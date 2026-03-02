@@ -1,12 +1,18 @@
 <template>
   <div class="min-h-screen flex flex-col items-center justify-center px-6 relative overflow-hidden">
-    <!-- Animated title -->
-    <h1 class="flex gap-1 mb-6">
+    <!-- Animated title with logo as "C" -->
+    <h1 class="flex items-center mb-6">
+      <img
+        src="/cosual.svg"
+        alt="C"
+        class="fade-up h-[4rem] w-[4rem] md:h-[6.5rem] md:w-[6.5rem] -mr-3.5 md:-mr-6 relative -top-0.5 md:-top-1"
+        style="animation-delay: 0s"
+      />
       <span
-        v-for="(letter, i) in 'COSUAL'.split('')"
+        v-for="(letter, i) in 'OSUAL'.split('')"
         :key="i"
         class="fade-up font-display font-extrabold text-6xl md:text-8xl text-text"
-        :style="{ animationDelay: `${i * 0.1}s` }"
+        :style="{ animationDelay: `${(i + 1) * 0.1}s` }"
       >
         {{ letter }}
       </span>
