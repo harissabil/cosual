@@ -1,8 +1,17 @@
 import axios from 'axios'
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
+const API_KEY = import.meta.env.VITE_API_KEY || ''
 
 const api = axios.create({ baseURL: BASE_URL })
+
+// Attach the API key header to every request (if configured)
+if (API_KEY) {
+  api.interceptors.request.use((config) => {
+    config.headers['X-API-Key'] = API_KEY
+    return config
+  })
+}
 
 /**
  * Convert a relative output_url from the API to an absolute URL.
