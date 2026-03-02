@@ -4,18 +4,19 @@ import json
 import logging
 from typing import Optional, Literal
 
-from fastapi import APIRouter, BackgroundTasks, HTTPException
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from pydantic import BaseModel, model_validator
 
 from agents.graph import run_graph
 from agents.state import CosualState
+from api.security import require_api_key
 from database.connection import async_session
 from database.models import Job, generate_uuid
 from utils.title_generator import generate_title
 
 logger = logging.getLogger("cosual")
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(require_api_key)])
 
 
 class GenerateRequest(BaseModel):

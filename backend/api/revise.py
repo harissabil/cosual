@@ -4,18 +4,19 @@ import json
 import logging
 import os
 
-from fastapi import APIRouter, BackgroundTasks, HTTPException
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy import select, func
 
 from agents.graph import run_revision_graph
 from agents.state import CosualState
+from api.security import require_api_key
 from database.connection import async_session
 from database.models import Job, ImageRevision, generate_uuid
 
 logger = logging.getLogger("cosual")
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(require_api_key)])
 
 
 class ReviseRequest(BaseModel):
