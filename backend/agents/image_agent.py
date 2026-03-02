@@ -10,6 +10,7 @@ from dashscope import MultiModalConversation
 from dotenv import load_dotenv
 
 from agents.state import CosualState
+from agents.models import IMAGE_MODEL, IMAGE_EDIT_MODEL
 from database.connection import async_session
 from database.models import ImageRevision, generate_uuid
 from utils.file_storage import download_and_save, IMAGES_DIR
@@ -65,7 +66,7 @@ async def image_agent_node(state: CosualState) -> CosualState:
             partial(
                 MultiModalConversation.call,
                 api_key=API_KEY,
-                model="qwen-image-edit-max",
+                model=IMAGE_EDIT_MODEL,
                 messages=messages,
                 stream=False,
                 n=1,
@@ -127,7 +128,7 @@ async def image_agent_node(state: CosualState) -> CosualState:
         partial(
             MultiModalConversation.call,
             api_key=API_KEY,
-            model="qwen-image-max",
+            model=IMAGE_MODEL,
             messages=messages,
             result_format="message",
             stream=False,

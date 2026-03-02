@@ -10,6 +10,7 @@ from dashscope import VideoSynthesis
 from dotenv import load_dotenv
 
 from agents.state import CosualState
+from agents.models import VIDEO_MODEL
 from utils.file_storage import download_and_save, VIDEOS_DIR
 
 load_dotenv()
@@ -44,7 +45,7 @@ async def video_agent_node(state: CosualState) -> CosualState:
         partial(
             VideoSynthesis.async_call,
             api_key=API_KEY,
-            model="wan2.6-t2v",
+            model=VIDEO_MODEL,
             prompt=prompt,
             size=size,
             shot_type="multi",
