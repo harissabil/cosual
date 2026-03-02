@@ -48,9 +48,8 @@ Built with **Vue 3** + **FastAPI** + **LangGraph** + **Alibaba Cloud Model Studi
 3. Select **Ubuntu 22.04** (or 24.04) image
 4. Choose at least **2 vCPU / 2 GB RAM** (4 GB recommended for image/video generation)
 5. Open the following ports in the firewall rules:
-   - **80** (HTTP — frontend)
+   - **80** (HTTP — frontend + API via `/api/`)
    - **443** (HTTPS — optional, for domain + SSL)
-   - **8000** (Backend API — or keep internal only if using a reverse proxy)
 6. Note your server's **Public IP address**
 
 ### 2. Connect to the Server
@@ -98,8 +97,8 @@ Fill in:
 # Your DashScope API key
 DASHSCOPE_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
-# Your server's public IP or domain name
-DOMAIN=<YOUR_SERVER_IP>
+# Secret key to protect API endpoints (recommended)
+COSUAL_API_KEY=your-secret-api-key-here
 ```
 
 ### 6. Build and Launch
@@ -125,7 +124,7 @@ docker compose logs -f
 
 Visit your app:
 - **Frontend**: `http://<YOUR_SERVER_IP>`
-- **Backend API docs**: `http://<YOUR_SERVER_IP>:8000/docs`
+- **Backend API docs**: `http://<YOUR_SERVER_IP>/api/docs`
 
 ## Set Up a Domain with SSL (Optional)
 
@@ -174,28 +173,14 @@ server {
     ssl_certificate     /etc/letsencrypt/live/yourdomain.com/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem;
 
-    # Frontend
+    # Everything (frontend + /api/ backend proxy) is handled by the container
     location / {
         proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-    }
-
-    # Backend API
-    location /api/ {
-        proxy_pass http://127.0.0.1:8000/;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-
-    # Backend static files (generated images/videos)
-    location /files/ {
-        proxy_pass http://127.0.0.1:8000/files/;
-        proxy_set_header Host $host;
     }
 }
 ```
@@ -209,9 +194,6 @@ nginx -t && systemctl reload nginx
 Update `docker-compose.yml` to map frontend to port `3000:80` instead of `80:80` and rebuild:
 
 ```bash
-# In .env, set:
-# DOMAIN=yourdomain.com
-
 docker compose up -d --build
 ```
 
@@ -222,8 +204,8 @@ docker compose up -d --build
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
 | `DASHSCOPE_API_KEY` | ✅ | — | Alibaba Cloud Model Studio API key |
-| `DOMAIN` | ✅ | `localhost` | Server public IP or domain (used at frontend build time) |
-| `DATABASE_URL` | ❌ | `sqlite+aiosqlite:///./data/cosual.db` | SQLite connection string |
+| `COSUAL_API_KEY` | ❌ | — | Secret key to protect backend API endpoints. If empty, auth is disabled |
+| `DATABASE_URL` | ❌ | `sqlite+aiosqlite:///./data/cosual.db` | SQLite connection string (set automatically by Docker Compose) |
 
 ## Tech Stack
 
@@ -254,8 +236,6 @@ cp .env.example .env
 npm install
 npm run dev
 ```
-
----
 
 ## License
 
