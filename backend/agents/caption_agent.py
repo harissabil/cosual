@@ -70,6 +70,6 @@ Do NOT mention "AI-generated" or "Cosual" — present it as a real visual insigh
 
 Output ONLY the caption. No preamble, no labels, no explanation."""
 
-    caption = await call_qwen(prompt, agent_name="caption_agent")
+    caption = await call_qwen(prompt, agent_name="caption_agent", enable_thinking=False)
     logger.info("[caption_agent] ✅ Caption generated (%d chars)", len(caption))
     return {**state, "caption": caption.strip()}

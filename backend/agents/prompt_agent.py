@@ -88,6 +88,7 @@ Auth: JwtFilter
 
 Output the grouped list only. No explanation, no extra text.""",
         agent_name="prompt_agent",
+        enable_thinking=False,
     )
 
     # Parse "LAYER: Name1, Name2" format into two separate structures
@@ -189,7 +190,7 @@ Write a short, precise edit prompt (1-3 sentences) that tells the image-edit mod
 - Do NOT describe the entire image — only describe the changes.
 - Output ONLY the edit prompt text. No preamble."""
 
-        result = await call_qwen(llm_prompt, agent_name="prompt_agent")
+        result = await call_qwen(llm_prompt, agent_name="prompt_agent", enable_thinking=False)
         logger.info("[prompt_agent] ✅ Revision edit prompt generated (%d chars)", len(result))
         return {**state, "generated_prompt": result.strip()}
 
@@ -265,7 +266,7 @@ Output ONLY the storyboard in this format, no preamble:
 Shot 1 [0-Xs]: [description]. Transition: [type].
 Shot 2 [X-Ys]: [description]. Transition: [type]."""
 
-        result = await call_qwen(llm_prompt, agent_name="prompt_agent")
+        result = await call_qwen(llm_prompt, agent_name="prompt_agent", enable_thinking=True)
         logger.info("[prompt_agent] ✅ Creative prompt from LLM (%d chars)", len(result))
 
     return {**state, "generated_prompt": result.strip()}

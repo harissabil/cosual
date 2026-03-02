@@ -49,7 +49,7 @@ async def _step1_readme(client: httpx.AsyncClient, owner: str, repo: str) -> Opt
         "If not, reply with exactly: UNCLEAR\n\n"
         f"{readme_text[:8000]}"
     )
-    result = await call_qwen(prompt, agent_name="github_agent")
+    result = await call_qwen(prompt, agent_name="github_agent", enable_thinking=True)
     if result.strip() == "UNCLEAR":
         logger.info("[github_agent] 📖 Step 1 result: UNCLEAR — moving to Step 2")
         return None
@@ -78,7 +78,7 @@ async def _step2_file_tree(client: httpx.AsyncClient, owner: str, repo: str) -> 
         "If the tree gives no meaningful signal, reply with exactly: UNCLEAR\n\n"
         + "\n".join(file_paths[:500])
     )
-    result = await call_qwen(prompt, agent_name="github_agent")
+    result = await call_qwen(prompt, agent_name="github_agent", enable_thinking=True)
     if result.strip() == "UNCLEAR":
         logger.info("[github_agent] 🌳 Step 2 result: UNCLEAR — moving to Step 3")
         return None, file_paths
@@ -107,7 +107,7 @@ async def _step3_key_files(
         "no extra text. Just the paths."
     )
 
-    selection_result = await call_qwen(selection_prompt, agent_name="github_agent")
+    selection_result = await call_qwen(selection_prompt, agent_name="github_agent", enable_thinking=False)
     selected_files = [
         line.strip().strip("`").strip("-").strip()
         for line in selection_result.strip().splitlines()
@@ -146,7 +146,7 @@ async def _step3_key_files(
         "or system flow. Be concise.\n\n"
         f"{combined}"
     )
-    result = (await call_qwen(prompt, agent_name="github_agent")).strip()
+    result = (await call_qwen(prompt, agent_name="github_agent", enable_thinking=True)).strip()
     logger.info("[github_agent] ✅ Step 3 complete — summary extracted from LLM-selected files")
     return result
 

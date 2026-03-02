@@ -24,6 +24,6 @@ async def code_analyzer_node(state: CosualState) -> CosualState:
         f"{raw_code[:8000]}"
     )
 
-    summary = await call_qwen(prompt, agent_name="code_analyzer")
+    summary = await call_qwen(prompt, agent_name="code_analyzer", enable_thinking=True)
     logger.info("[code_analyzer] ✅ Code analysis complete")
     return {**state, "architecture_summary": summary.strip()}
