@@ -31,6 +31,7 @@ services:
       context: ./frontend
       args:
         VITE_API_BASE_URL: /api
+        VITE_API_KEY: ${COSUAL_API_KEY:-}
     container_name: cosual-frontend
     restart: unless-stopped
     ports:
